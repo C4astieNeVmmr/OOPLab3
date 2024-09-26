@@ -11,6 +11,15 @@ class TVector{
         }
         return this->arr[index];
     }
+    const T& operator[](int index) const {
+        if(index>=(this->len)){
+            throw std::out_of_range("");
+        }
+        return this->arr[index];
+    }
+    int getLength(){
+        return this->len;
+    }
     TVector(int l=1){
         this->len = l;
         this->arr = new T[this->len];
@@ -19,7 +28,7 @@ class TVector{
         this->len = vectorToCopy.len;
         this->arr = new T[this->len];
         for(int i=0;i<this->len;i++){
-            this->arr[i] = vectorToCopy.arr[i];//TODO how to change this
+            (*this)[i] = vectorToCopy[i];
         }
     }
     ~TVector(){
@@ -35,7 +44,7 @@ class TVector{
         this->arr = newArr;
         delete[] tempPtr;
     }
-    TVector<T> operator=(TVector<T> vectorB){
+    TVector<T> operator=(const TVector<T>& vectorB){
         if(&vectorB!=this){
             if(this->len!=vectorB.len){
                 this->len=vectorB.len;
@@ -50,15 +59,16 @@ class TVector{
     }/*
     TVector<T> operator+(TVector<T> vectorB){
         
-    }
-    TVector<T> operator+=(TVector<T> vectorB){
-        if(this->len!=vectorB.len){
-            throw out_of_range("");
+    }*/
+    TVector<T> operator+=(const TVector<T>& vectorB){
+        if((this->len)!=(vectorB.len)){
+            throw std::out_of_range("");
         }
         for(int i=0;i<this->len;i++){
-            this->arr[i] += vectorB.arr[i];
+            (*this)[i] += vectorB[i];
         }
-    }*/
+        return *this;
+    }
     friend std::ostream& operator<<(std::ostream& os,TVector<T> vec){
         for(int i=0;i<vec.len;i++){
             os << vec[i] << " ";
@@ -78,24 +88,26 @@ int main(){
     for(int i=0;i<b;i++){
         intVectorB[i] = 2*i+1;
     }
-    std::cout << "charVector = " << charVector;
-    std::cout << "\n\n intVectorA = " << intVectorA;
-    std::cout << "\n\n intVectorB = " << intVectorB << "\n\n\n";
+    std::cout << "charVector = " << charVector << "\tlen = " << charVector.getLength();
+    std::cout << "\nintVectorA = " << intVectorA << "\tlen = " << intVectorA.getLength();
+    std::cout << "\nintVectorB = " << intVectorB << "\tlen = " << intVectorB.getLength() << "\n\n\n";
     intVectorA[0] = 314;
     intVectorB[0] = 271;
-    std::cout << "\n\n intVectorA = " << intVectorA;
-    std::cout << "\n\n intVectorB = " << intVectorB << "\n\n\n";
+    std::cout << "\nintVectorA = " << intVectorA << "\tlen = " << intVectorA.getLength();
+    std::cout << "\nintVectorB = " << intVectorB << "\tlen = " << intVectorB.getLength() << "\n\n\n";
     intVectorA.setLength(20);
     intVectorB.setLength(5);
-    std::cout << "\n\n intVectorA = " << intVectorA;
-    std::cout << "\n\n intVectorB = " << intVectorB << "\n\n\n";
+    std::cout << "\nintVectorA = " << intVectorA << "\tlen = " << intVectorA.getLength();
+    std::cout << "\nintVectorB = " << intVectorB << "\tlen = " << intVectorB.getLength() << "\n\n\n";
     //std::cout << intVectorB[10]=5; out_of_range
     intVectorA = intVectorB;
-    std::cout << "\n\n intVectorA = " << intVectorA;
-    std::cout << "\n\n intVectorB = " << intVectorB << "\n\n\n";
+    std::cout << "\nintVectorA = " << intVectorA << "\tlen = " << intVectorA.getLength();
+    std::cout << "\nintVectorB = " << intVectorB << "\tlen = " << intVectorA.getLength() << "\n\n\n";
     intVectorA[0] = 161;
-    std::cout << "\n\n intVectorA = " << intVectorA;
-    std::cout << "\n\n intVectorB = " << intVectorB << "\n\n\n";
-    
+    std::cout << "\nintVectorA = " << intVectorA << "\tlen = " << intVectorA.getLength();
+    std::cout << "\nintVectorB = " << intVectorB << "\tlen = " << intVectorA.getLength() << "\n\n\n";
+    intVectorA+=intVectorB;
+    std::cout << "\n intVectorA = " << intVectorA << "\tlen = " << intVectorA.getLength();
+    std::cout << "\n intVectorB = " << intVectorB << "\tlen = " << intVectorA.getLength() << "\n\n\n";
     return 0;
 }
