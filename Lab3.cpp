@@ -5,6 +5,12 @@ class TVector{
     T* arr;
     int len;
     public:
+    T& operator[](int index){
+        if(index>=(this->len)){
+            throw std::out_of_range("");
+        }
+        return this->arr[index];
+    }
     TVector(int l=1){
         this->len = l;
         this->arr = new T[this->len];
@@ -13,7 +19,7 @@ class TVector{
         this->len = vectorToCopy.len;
         this->arr = new T[this->len];
         for(int i=0;i<this->len;i++){
-            this->arr[i] = vectorToCopy.arr[i];
+            this->arr[i] = vectorToCopy.arr[i];//TODO how to change this
         }
     }
     ~TVector(){
@@ -22,22 +28,26 @@ class TVector{
     void setLength(int newLen){
         T* newArr = new T[newLen];
         for(int i=0;(i<newLen)&&(i<this->len);i++){
-            newArr[i] = this->arr[i];
+            newArr[i] = (*this)[i];
         }
         this->len = newLen;
         T* tempPtr=this->arr;
         this->arr = newArr;
         delete[] tempPtr;
     }
-    T& operator[](int index){
-        if(index>=(this->len)){
-            throw std::out_of_range("");
+    TVector<T> operator=(TVector<T> vectorB){
+        if(&vectorB!=this){
+            if(this->len!=vectorB.len){
+                this->len=vectorB.len;
+                delete[] this->arr;
+                this->arr = new T[this->len];
+            }
+            for(int i=0;i<this->len;i++){
+                (*this)[i] = vectorB[i];
+            }
         }
-        return this->arr[index];
-    }
-    /*TVector<T> operator=(TVector<T> vectorB){
-
-    }
+        return *this;
+    }/*
     TVector<T> operator+(TVector<T> vectorB){
         
     }
@@ -80,5 +90,12 @@ int main(){
     std::cout << "\n\n intVectorA = " << intVectorA;
     std::cout << "\n\n intVectorB = " << intVectorB << "\n\n\n";
     //std::cout << intVectorB[10]=5; out_of_range
+    intVectorA = intVectorB;
+    std::cout << "\n\n intVectorA = " << intVectorA;
+    std::cout << "\n\n intVectorB = " << intVectorB << "\n\n\n";
+    intVectorA[0] = 161;
+    std::cout << "\n\n intVectorA = " << intVectorA;
+    std::cout << "\n\n intVectorB = " << intVectorB << "\n\n\n";
+    
     return 0;
 }
