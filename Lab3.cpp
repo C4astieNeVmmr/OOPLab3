@@ -6,29 +6,32 @@ class TVector{
     T* arr;
     int len;
     public:
-    T& operator[](int index){
-        if(index>=(this->len)){
-            throw std::out_of_range("");
-        }
-        return this->arr[index];
-    }
-    const T& operator[](int index) const {
-        if(index>=(this->len)){
-            throw std::out_of_range("");
-        }
-        return this->arr[index];
-    }
-    int getLength(){
+    int& getLength(){
         return this->len;
     }
+    const int getLength() const {//some method take athuments as const's, and can't apply non-const method to them
+        return this->len;
+    }
+    T& operator[](int index){
+        if(index>=((*this).getLength())){
+            throw std::out_of_range("");
+        }
+        return this->arr[index];
+    }
+    const T& operator[](int index) const {//some method take athuments as const's, and can't apply non-const method to them
+        if(index>=((*this).getLength())){
+            throw std::out_of_range("");
+        }
+        return this->arr[index];
+    }
     TVector(int l=1){
-        this->len = l;
+        (*this).getLength() = l;
         this->arr = new T[this->len];
     }
     TVector(const TVector<T>& vectorToCopy){
-        this->len = vectorToCopy.len;
-        this->arr = new T[this->len];
-        for(int i=0;i<this->len;i++){
+        (*this).getLength() = vectorToCopy.len;
+        this->arr = new T[(*this).getLength()];
+        for(int i=0;i<(*this).getLength();i++){
             (*this)[i] = vectorToCopy[i];
         }
     }
@@ -37,38 +40,38 @@ class TVector{
     }
     void setLength(int newLen){
         T* newArr = new T[newLen];
-        for(int i=0;(i<newLen)&&(i<this->len);i++){
+        for(int i=0;(i<newLen)&&(i<(*this).getLength());i++){
             newArr[i] = (*this)[i];
         }
-        this->len = newLen;
+        (*this).getLength() = newLen;
         T* tempPtr=this->arr;
         this->arr = newArr;
         delete[] tempPtr;
     }
     TVector<T> operator=(const TVector<T>& vectorB){
         if(&vectorB!=this){
-            if(this->len!=vectorB.len){
-                this->len=vectorB.len;
+            if((*this).getLength()!=vectorB.getLength()){
+                (*this).getLength()=vectorB.getLength();
                 delete[] this->arr;
-                this->arr = new T[this->len];
+                this->arr = new T[(*this).getLength()];
             }
-            for(int i=0;i<this->len;i++){
+            for(int i=0;i<(*this).getLength();i++){
                 (*this)[i] = vectorB[i];
             }
         }
         return *this;
     }
     TVector<T> operator+=(const TVector<T>& vectorB){
-        if((this->len)!=(vectorB.len)){
+        if((*this).getLength()!=(vectorB.getLength())){
             throw std::out_of_range("");
         }
-        for(int i=0;i<this->len;i++){
+        for(int i=0;i<(*this).getLength();i++){
             (*this)[i] += vectorB[i];
         }
         return *this;
     }
     friend std::ostream& operator<<(std::ostream& os, TVector<T> vector) {
-        for(int i=0;i<vector.len;i++){
+        for(int i=0;i<vector.getLength();i++){
             os << vector[i] << " ";
         }
         return os;
