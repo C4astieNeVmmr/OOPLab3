@@ -1,15 +1,16 @@
 #include <iostream>
+#include <stdexcept>
 #include <string.h>
 
 template <class T>
-class TVector{
+class TVectorBase{
     T* arr;
     int len;
     public:
     int& getLength(){
         return this->len;
     }
-    const int getLength() const {//some method take athuments as const's, and can't apply non-const method to them
+    const int getLength() const {//some method take arguments as const's, and can't apply non-const method to them
         return this->len;
     }
     T& operator[](int index){
@@ -18,24 +19,24 @@ class TVector{
         }
         return this->arr[index];
     }
-    const T& operator[](int index) const {//some method take athuments as const's, and can't apply non-const method to them
+    const T& operator[](int index) const {//some method take arguments as const's, and can't apply non-const method to them
         if(index>=((*this).getLength())){
             throw std::out_of_range("");
         }
         return this->arr[index];
     }
-    TVector(int l=1){
+    TVectorBase(int l=1){
         (*this).getLength() = l;
         this->arr = new T[this->len];
     }
-    TVector(const TVector<T>& vectorToCopy){
+    TVectorBase(const TVectorBase<T>& vectorToCopy){
         (*this).getLength() = vectorToCopy.len;
         this->arr = new T[(*this).getLength()];
         for(int i=0;i<(*this).getLength();i++){
             (*this)[i] = vectorToCopy[i];
         }
     }
-    ~TVector(){
+    ~TVectorBase(){
         delete[] this->arr;
     }
     void setLength(int newLen){
@@ -48,7 +49,7 @@ class TVector{
         this->arr = newArr;
         delete[] tempPtr;
     }
-    TVector<T> operator=(const TVector<T>& vectorB){
+    TVectorBase<T> operator=(const TVectorBase<T>& vectorB){
         if(&vectorB!=this){
             if((*this).getLength()!=vectorB.getLength()){
                 (*this).getLength()=vectorB.getLength();
@@ -61,7 +62,7 @@ class TVector{
         }
         return *this;
     }
-    TVector<T> operator+=(const TVector<T>& vectorB){
+    TVectorBase<T> operator+=(const TVectorBase<T>& vectorB){
         if((*this).getLength()!=(vectorB.getLength())){
             throw std::out_of_range("");
         }
@@ -70,13 +71,35 @@ class TVector{
         }
         return *this;
     }
-    friend std::ostream& operator<<(std::ostream& os, TVector<T> vector) {
+};
+
+template <class T>
+class TVector:public TVectorBase<T>{
+    public:
+    TVector(int l=1):TVectorBase<T>(l){};
+    TVector(const TVectorBase<T>& vectorToCopy):TVectorBase<T>(vectorToCopy){};
+    ~TVector(){};
+    friend std::ostream& operator<<(std::ostream& os, TVectorBase<T> vector) {
+        throw std::bad_cast();
+    }
+    friend std::istream& operator>>(std::istream& is, TVectorBase<T>& vector) {
+        throw std::bad_cast();
+    }
+};
+
+template<>
+class TVector<int>:public TVectorBase<int>{
+    public:
+    TVector(int l=1):TVectorBase<int>(l){};
+    TVector(const TVectorBase<int>& vectorToCopy):TVectorBase<int>(vectorToCopy){};
+    ~TVector(){};
+    friend std::ostream& operator<<(std::ostream& os, TVectorBase<int> vector) {
         for(int i=0;i<vector.getLength();i++){
             os << vector[i] << " ";
         }
         return os;
     }
-    friend std::istream& operator>>(std::istream& is, TVector<T>& vector) {
+    friend std::istream& operator>>(std::istream& is, TVectorBase<int>& vector) {
         int length;
         is >> length;
         vector.setLength(length);
@@ -86,7 +109,28 @@ class TVector{
         return is;
     }
 };
-
+template<>
+class TVector<char>:public TVectorBase<char>{
+    public:
+    TVector(int l=1):TVectorBase<char>(l){};
+    TVector(const TVectorBase<char>& vectorToCopy):TVectorBase<char>(vectorToCopy){};
+    ~TVector(){};
+    friend std::ostream& operator<<(std::ostream& os, TVectorBase<char> vector) {
+        for(int i=0;i<vector.getLength();i++){
+            os << vector[i] << " ";
+        }
+        return os;
+    }
+    friend std::istream& operator>>(std::istream& is, TVectorBase<char>& vector) {
+        int length;
+        is >> length;
+        vector.setLength(length);
+        for (int i = 0; i < length; ++i) {
+            is >> vector[i];
+        }
+        return is;
+    }
+};
 
 
 int main(){
@@ -123,7 +167,7 @@ int main(){
     std::cout << "\n intVectorB = " << intVectorB << "\tlen = " << intVectorA.getLength() << "\n\n\n";
 
     TVector<std::string> vectorToRead;
-    std::cin >> vectorToRead;
-    std::cout << "\n vectorToRead = " << vectorToRead;
+    //std::cin >> vectorToRead;
+    //std::cout << "\n vectorToRead = " << vectorToRead;
     return 0;
 }
