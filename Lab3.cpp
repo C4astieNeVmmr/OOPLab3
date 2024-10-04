@@ -1,7 +1,8 @@
 #include <iostream>
 #include <stdexcept>
 #include <string.h>
-
+//to compile 
+//g++ -fconcepts -std=c++17 -o Lab3 Lab3.cpp
 template <class T>
 class TVectorBase{
     T* arr;
@@ -74,6 +75,13 @@ class TVectorBase{
 };
 
 template <class T>
+concept streamable = requires (T t,std::istream is,std::ostream os)
+{
+    is >> t;
+    os << t;
+};
+
+template <class T>
 class TVector:public TVectorBase<T>{
     public:
     TVector(int l=1):TVectorBase<T>(l){};
@@ -87,19 +95,19 @@ class TVector:public TVectorBase<T>{
     }
 };
 
-template<>
-class TVector<int>:public TVectorBase<int>{
+template<streamable T>
+class TVector<T>:public TVectorBase<T>{
     public:
-    TVector(int l=1):TVectorBase<int>(l){};
-    TVector(const TVectorBase<int>& vectorToCopy):TVectorBase<int>(vectorToCopy){};
+    TVector(int l=1):TVectorBase<T>(l){};
+    TVector(const TVectorBase<T>& vectorToCopy):TVectorBase<T>(vectorToCopy){};
     ~TVector(){};
-    friend std::ostream& operator<<(std::ostream& os, TVectorBase<int> vector) {
+    friend std::ostream& operator<<(std::ostream& os, TVectorBase<T> vector) {
         for(int i=0;i<vector.getLength();i++){
             os << vector[i] << " ";
         }
         return os;
     }
-    friend std::istream& operator>>(std::istream& is, TVectorBase<int>& vector) {
+    friend std::istream& operator>>(std::istream& is, TVectorBase<T>& vector) {
         int length;
         is >> length;
         vector.setLength(length);
@@ -109,29 +117,6 @@ class TVector<int>:public TVectorBase<int>{
         return is;
     }
 };
-template<>
-class TVector<char>:public TVectorBase<char>{
-    public:
-    TVector(int l=1):TVectorBase<char>(l){};
-    TVector(const TVectorBase<char>& vectorToCopy):TVectorBase<char>(vectorToCopy){};
-    ~TVector(){};
-    friend std::ostream& operator<<(std::ostream& os, TVectorBase<char> vector) {
-        for(int i=0;i<vector.getLength();i++){
-            os << vector[i] << " ";
-        }
-        return os;
-    }
-    friend std::istream& operator>>(std::istream& is, TVectorBase<char>& vector) {
-        int length;
-        is >> length;
-        vector.setLength(length);
-        for (int i = 0; i < length; ++i) {
-            is >> vector[i];
-        }
-        return is;
-    }
-};
-
 
 int main(){
     int a = 10, b = 15;
@@ -167,7 +152,7 @@ int main(){
     std::cout << "\n intVectorB = " << intVectorB << "\tlen = " << intVectorA.getLength() << "\n\n\n";
 
     TVector<std::string> vectorToRead;
-    //std::cin >> vectorToRead;
-    //std::cout << "\n vectorToRead = " << vectorToRead;
+    std::cin >> vectorToRead;
+    std::cout << "\n vectorToRead = " << vectorToRead;
     return 0;
 }
