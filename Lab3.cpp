@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string.h>
 
 template <class T>
 class TVector{
@@ -56,10 +57,7 @@ class TVector{
             }
         }
         return *this;
-    }/*
-    TVector<T> operator+(TVector<T> vectorB){
-        
-    }*/
+    }
     TVector<T> operator+=(const TVector<T>& vectorB){
         if((this->len)!=(vectorB.len)){
             throw std::out_of_range("");
@@ -69,13 +67,24 @@ class TVector{
         }
         return *this;
     }
-    friend std::ostream& operator<<(std::ostream& os,TVector<T> vec){
-        for(int i=0;i<vec.len;i++){
-            os << vec[i] << " ";
+    friend std::ostream& operator<<(std::ostream& os, TVector<T> vector) {
+        for(int i=0;i<vector.len;i++){
+            os << vector[i] << " ";
         }
         return os;
     }
+    friend std::istream& operator>>(std::istream& is, TVector<T>& vector) {
+        int length;
+        is >> length;
+        vector.setLength(length);
+        for (int i = 0; i < length; ++i) {
+            is >> vector[i];
+        }
+        return is;
+    }
 };
+
+
 
 int main(){
     int a = 10, b = 15;
@@ -109,5 +118,9 @@ int main(){
     intVectorA+=intVectorB;
     std::cout << "\n intVectorA = " << intVectorA << "\tlen = " << intVectorA.getLength();
     std::cout << "\n intVectorB = " << intVectorB << "\tlen = " << intVectorA.getLength() << "\n\n\n";
+
+    TVector<std::string> vectorToRead;
+    std::cin >> vectorToRead;
+    std::cout << "\n vectorToRead = " << vectorToRead;
     return 0;
 }
